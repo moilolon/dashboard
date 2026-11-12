@@ -4,23 +4,71 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <title>Paneles</title>
+  <title>Dashboards</title>
   <link rel="stylesheet" href="estilos.css">
+  <script src="comun.js"></script>
 </head>
-<body>
-  <div class="pagina">
-    <header class="cabecera">
-      <h1>Paneles</h1>
-    </header>
+<body data-raiz="" data-pagina="resumen">
+  <aside id="menu"></aside>
 
-    <!-- Un panel nuevo es una carpeta con su index.html y sus datos, y una tarjeta aquí. -->
-    <main class="rejilla paneles">
-      <a class="tarjeta panel" href="lista-compra/">
-        <div class="icono" aria-hidden="true">🛒</div>
-        <h2>Precios de la compra</h2>
-        <p class="sub">Cómo cambian los precios de los productos del catálogo en Mercadona y Alcampo.</p>
+  <main class="pagina">
+    <div class="titulo" id="titular"><span class="punto"></span>Resumen</div>
+    <div class="avisos" id="avisos"></div>
+
+    <!-- Un dashboard nuevo es una tarjeta aquí, su entrada en el menú de comun.js y su carpeta. -->
+    <div class="seccion">Compra</div>
+    <div class="rejilla resumen">
+      <a class="tarjeta resumen" href="supermercado/" id="tarjeta-supermercado">
+        <div class="cab">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11h10.2L20 7H6.2"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></svg>
+          <h2>Supermercado</h2><span class="hueco"></span><span class="punto" id="super-punto"></span>
+        </div>
+        <div class="cifra">
+          <div class="valor" id="super-valor">—</div>
+          <div class="sub" id="super-sub">Cargando los precios…</div>
+        </div>
+        <div class="lineas" id="super-lineas"></div>
+        <div class="pie" id="super-pie"></div>
       </a>
-    </main>
-  </div>
+    </div>
+  </main>
+
+  <script>
+    (async () => {
+      let datos;
+      try { datos = await cargarPrecios(''); } catch (error) {
+        $('super-sub').textContent = 'No se han podido cargar los precios.';
+        return;
+      }
+      const hoy = datos.actualizado;
+      const semana = restarDias(hoy, 7);
+      const lista = datos.lista;
+      const cesta = lista.reduce((suma, p) => suma + p.precios.at(-1)[1], 0);
+      const cambiados = lista
+        .map((p) => ({ p, antes: precioEn(p, semana) ?? p.precios[0][1], ahora: p.precios.at(-1)[1] }))
+        .filter((c) => c.antes !== c.ahora)
+        .sort((a, b) => Math.abs(b.ahora - b.antes) / b.antes - Math.abs(a.ahora - a.antes) / a.antes);
+      const suben = cambiados.filter((c) => c.ahora > c.antes).length;
+      const bajan = cambiados.length - suben;
+      const antesCesta = lista.reduce((suma, p) => suma + (precioEn(p, semana) ?? p.precios[0][1]), 0);
+
+      const estado = !cambiados.length ? 'bien' : cesta > antesCesta ? 'aviso' : 'bien';
+      $('titular').innerHTML = `<span class="punto ${estado}"></span>${cambiados.length ? `${cambiados.length} ${cambiados.length === 1 ? 'precio ha cambiado' : 'precios han cambiado'} en los últimos 7 días` : 'Sin cambios de precio en los últimos 7 días'}`;
+      $('avisos').innerHTML = cambiados.slice(0, 6).map((c) => `<a class="chip" href="supermercado/?p=${encodeURIComponent(c.p.id)}"><b>${esc(c.p.nombre)}</b>${cambio(c.antes, c.ahora, true)}<span class="de">${esc(c.p.tienda)}</span></a>`).join('')
+        + (cambiados.length > 6 ? `<a class="chip" href="supermercado/"><span class="de">y ${cambiados.length - 6} más</span></a>` : '');
+
+      const porTienda = {};
+      lista.forEach((p) => { porTienda[p.tienda] = (porTienda[p.tienda] || 0) + 1; });
+      $('super-punto').className = `punto ${estado}`;
+      $('super-valor').textContent = euros.format(cesta);
+      $('super-sub').textContent = `cuesta la cesta de ${lista.length} productos`;
+      $('super-lineas').innerHTML = [
+        cambiados.length ? `En 7 días: ${cambio(antesCesta, cesta) || 'la cesta no cambia'}` : 'La cesta no ha cambiado en 7 días',
+        cambiados.length ? `${suben} ▲ suben · ${bajan} ▼ bajan` : '',
+        Object.entries(porTienda).map(([tienda, n]) => `${esc(tienda)} ${n}`).join(' · '),
+      ].filter(Boolean).map((l) => `<div>${l}</div>`).join('');
+      $('super-pie').textContent = `Actualizado ${hace(hoy)}`;
+    })();
+  </script>
 </body>
 </html>

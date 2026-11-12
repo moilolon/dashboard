@@ -1,17 +1,17 @@
 <div align="center">
 
-# 📊 Paneles
+# 📊 Dashboards
 
-**Paneles de datos de casa, servidos con GitHub Pages**
+**Dashboards de datos de casa, servidos con GitHub Pages**
 
-[![Ver los paneles](https://img.shields.io/badge/Ver%20los%20paneles-moilolon.github.io%2Fdashboard-1F6FEB?style=for-the-badge&logo=githubpages&logoColor=white)](https://moilolon.github.io/dashboard/)
+[![Ver los dashboards](https://img.shields.io/badge/Ver%20los%20dashboards-moilolon.github.io%2Fdashboard-1F6FEB?style=for-the-badge&logo=githubpages&logoColor=white)](https://moilolon.github.io/dashboard/)
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-rama%20main-222222?style=for-the-badge&logo=github&logoColor=white)](https://pages.github.com/)
 [![Sin compilación](https://img.shields.io/badge/HTML%20%C2%B7%20CSS%20%C2%B7%20JS-sin%20compilaci%C3%B3n-E34F26?style=for-the-badge&logo=html5&logoColor=white)](#-cómo-está-hecho)
 [![n8n](https://img.shields.io/badge/Datos-n8n-EA4B71?style=for-the-badge&logo=n8n&logoColor=white)](https://n8n.io/)
 [![Home Assistant](https://img.shields.io/badge/Origen-Home%20Assistant-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/)
 
-[Paneles](#-paneles) ·
+[Dashboards](#-dashboards-1) ·
 [Arquitectura](#-arquitectura) ·
 [Estructura](#-estructura) ·
 [Cómo está hecho](#-cómo-está-hecho) ·
@@ -24,21 +24,20 @@
 
 ## ✨ Qué es esto
 
-Un sitio estático con **paneles que pintan datos de casa**. No hay servidor ni
-compilación: lo que hay en la rama `main` es el sitio, y GitHub Pages lo sirve en
+Un sitio estático con **dashboards que pintan datos de casa**. No hay servidor ni
+compilación: lo que hay en la rama `main` es el sitio.
 
-### 👉 https://moilolon.github.io/dashboard/
-
-Los datos no se editan aquí a mano. Los escribe n8n desde el NAS de casa, y cada panel
-los lee al cargar.
+Los datos no se editan aquí a mano. Los escribe n8n desde el NAS de casa, y cada
+dashboard los lee al cargar.
 
 ---
 
-## 📊 Paneles
+## 📊 Dashboards
 
-| | Panel | Qué enseña | Dirección |
+| | Dashboard | Qué enseña | Dirección |
 |---|---|---|---|
-| 🛒 | **Precios de la compra** | Cómo cambian los precios de los productos del catálogo en Mercadona y Alcampo | [`/lista-compra/`](https://moilolon.github.io/dashboard/lista-compra/) |
+| 🏠 | **Resumen** | Una tarjeta por dashboard con sus cifras, y los avisos de lo que ha cambiado | [`/`](https://moilolon.github.io/dashboard/) |
+| 🛒 | **Supermercado** | Cómo cambian los precios de los productos del catálogo en Mercadona y Alcampo | [`/supermercado/`](https://moilolon.github.io/dashboard/supermercado/) |
 
 ---
 
@@ -55,7 +54,7 @@ flowchart LR
     end
 
     subgraph PUB["🌍 dashboard · público"]
-        JSON["lista-compra/precios.json"]
+        JSON["supermercado/precios.json"]
         WEB["📊 GitHub Pages"]
     end
 
@@ -69,7 +68,7 @@ flowchart LR
 
 > [!NOTE]
 > El catálogo de verdad vive en el repo privado. Aquí solo llega el historial de
-> precios, que es lo que pinta el panel.
+> precios, que es lo que pinta el dashboard.
 
 ---
 
@@ -77,11 +76,12 @@ flowchart LR
 
 ```text
 dashboard/
-├── 🏠 index.html          Portada: una tarjeta por panel
-├── 🎨 estilos.css         Estilos comunes, en claro y en oscuro
-├── 🛒 lista-compra/       Panel de precios de la compra
+├── 🏠 index.html          Resumen: una tarjeta por dashboard y los avisos
+├── 🎨 estilos.css         Estilos comunes: temas frío y cálido, claro y oscuro
+├── 🧩 comun.js            Menú, ajustes, formatos y gráficas que comparten todos
+├── 🛒 supermercado/       Dashboard de precios de la compra
 │   ├── index.html
-│   ├── panel.js           Lee precios.json y pinta sin bibliotecas
+│   ├── panel.js           Lee precios.json y pinta
 │   └── precios.json       Los datos: los escribe n8n
 ├── 🤖 robots.txt          Pide a los buscadores que no indexen el sitio
 └── 📄 .nojekyll           Hace que GitHub sirva los ficheros tal cual
@@ -89,10 +89,11 @@ dashboard/
 
 | Si quieres… | Ve a |
 |---|---|
-| Ver los paneles | [moilolon.github.io/dashboard](https://moilolon.github.io/dashboard/) |
-| Cambiar cómo se ve todo | [`estilos.css`](estilos.css) |
-| Cambiar el panel de precios | [`lista-compra/panel.js`](lista-compra/panel.js) |
-| Añadir un panel | [Cómo está hecho](#-cómo-está-hecho) |
+| Ver los dashboards | [moilolon.github.io/dashboard](https://moilolon.github.io/dashboard/) |
+| Cambiar los colores o el aspecto de todo | [`estilos.css`](estilos.css) |
+| Cambiar el menú o los ajustes | [`comun.js`](comun.js) |
+| Cambiar el dashboard del supermercado | [`supermercado/panel.js`](supermercado/panel.js) |
+| Añadir un dashboard | [Cómo está hecho](#-cómo-está-hecho) |
 
 ---
 
@@ -108,25 +109,38 @@ branch*). Cada commit se publica solo en alrededor de un minuto; GitHub lo ense�
 </details>
 
 <details>
-<summary><b>2 · Un panel por carpeta</b></summary>
+<summary><b>2 · Un dashboard por carpeta</b></summary>
 
-Cada panel es una carpeta con su `index.html`, su JavaScript y su fichero de datos. La
-página enlaza `../estilos.css`, pide su JSON al cargar y pinta en el navegador. Las
-gráficas son SVG hecho a mano: no hay bibliotecas ni dependencias que actualizar.
+Cada dashboard es una carpeta con su `index.html`, su JavaScript y su fichero de datos.
+La página carga `../estilos.css` y `../comun.js`, pide su JSON al cargar y pinta en el
+navegador. Las gráficas son SVG hecho a mano: no hay bibliotecas ni dependencias que
+actualizar.
 
 </details>
 
 <details>
-<summary><b>3 · Añadir un panel</b></summary>
+<summary><b>3 · Menú y ajustes</b></summary>
 
-1. Crear una carpeta con su `index.html` y enlazar `../estilos.css`.
+`comun.js` pinta el menú en todas las páginas a partir de una lista, y el panel de
+**Ajustes**: tema frío o cálido, modo automático, claro u oscuro, menú lateral o
+arriba, y ancho completo o estrecho. Los ajustes se guardan en el navegador de cada
+uno, no en el repo.
+
+</details>
+
+<details>
+<summary><b>4 · Añadir un dashboard</b></summary>
+
+1. Crear una carpeta con su `index.html`, cargando `../estilos.css` y `../comun.js`.
 2. Dejar sus datos en un JSON dentro de la carpeta.
-3. Añadir su tarjeta a `index.html` y su fila a la tabla de [Paneles](#-paneles).
+3. Añadir su entrada a la lista `MENU` de `comun.js`.
+4. Añadir su tarjeta al resumen, en `index.html`, y su fila a la tabla de
+   [Dashboards](#-dashboards-1).
 
 </details>
 
 <details>
-<summary><b>4 · Probarlo en local</b></summary>
+<summary><b>5 · Probarlo en local</b></summary>
 
 Hace falta un servidor, porque el navegador no deja leer el JSON abriendo el fichero
 directamente:
@@ -147,7 +161,7 @@ Los escribe n8n con la GitHub App `moilolon-datos`, al terminar cada lectura de 
 en la tienda: Mercadona los lunes y Alcampo los martes. Sus commits se llaman
 `Precios: N cambios`.
 
-`lista-compra/precios.json` guarda **un punto por producto solo cuando su precio
+`supermercado/precios.json` guarda **un punto por producto solo cuando su precio
 cambia**:
 
 ```json
@@ -175,7 +189,7 @@ sugerencias y el resto del catálogo se quedan en el repo privado.
 
 > [!IMPORTANT]
 > Lo que se publica aquí queda en el historial aunque luego se borre. Antes de añadir
-> un dato nuevo a un panel, hay que decidir si puede ser público.
+> un dato nuevo a un dashboard, hay que decidir si puede ser público.
 
 ---
 
