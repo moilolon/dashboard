@@ -2,197 +2,229 @@
 
 # 📊 Dashboards
 
-**Dashboards de datos de casa, servidos con GitHub Pages**
+**Dashboards of home data, served with GitHub Pages**
 
-[![Ver los dashboards](https://img.shields.io/badge/Ver%20los%20dashboards-moilolon.github.io%2Fdashboard-1F6FEB?style=for-the-badge&logo=githubpages&logoColor=white)](https://moilolon.github.io/dashboard/)
+[![Open the dashboards](https://img.shields.io/badge/Open%20the%20dashboards-moilolon.github.io%2Fdashboard-1F6FEB?style=for-the-badge&logo=githubpages&logoColor=white)](https://moilolon.github.io/dashboard/)
 
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-rama%20main-222222?style=for-the-badge&logo=github&logoColor=white)](https://pages.github.com/)
-[![Sin compilación](https://img.shields.io/badge/HTML%20%C2%B7%20CSS%20%C2%B7%20JS-sin%20compilaci%C3%B3n-E34F26?style=for-the-badge&logo=html5&logoColor=white)](#-cómo-está-hecho)
-[![n8n](https://img.shields.io/badge/Datos-n8n-EA4B71?style=for-the-badge&logo=n8n&logoColor=white)](https://n8n.io/)
-[![Home Assistant](https://img.shields.io/badge/Origen-Home%20Assistant-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-main%20branch-222222?style=for-the-badge&logo=github&logoColor=white)](https://pages.github.com/)
+[![No build](https://img.shields.io/badge/HTML%20%C2%B7%20CSS%20%C2%B7%20JS-no%20build-E34F26?style=for-the-badge&logo=html5&logoColor=white)](#-how-it-works)
+[![n8n](https://img.shields.io/badge/Data-n8n-EA4B71?style=for-the-badge&logo=n8n&logoColor=white)](https://n8n.io/)
+[![Home Assistant](https://img.shields.io/badge/Source-Home%20Assistant-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/)
 
 [Dashboards](#-dashboards-1) ·
-[Arquitectura](#-arquitectura) ·
-[Estructura](#-estructura) ·
-[Cómo está hecho](#-cómo-está-hecho) ·
-[Los datos](#-los-datos) ·
-[Qué es público](#-qué-es-público)
+[Architecture](#-architecture) ·
+[Structure](#-structure) ·
+[How it works](#-how-it-works) ·
+[The data](#-the-data) ·
+[What is public](#-what-is-public)
 
 </div>
 
 ---
 
-## ✨ Qué es esto
+## ✨ What this is
 
-Un sitio estático con **dashboards que pintan datos de casa**. No hay servidor ni
-compilación: lo que hay en la rama `main` es el sitio.
+A static site with **dashboards that draw data from home**. There is no server and no
+build step: what is on the `main` branch is the site.
 
-Los datos no se editan aquí a mano. Los escribe n8n desde el NAS de casa, y cada
-dashboard los lee al cargar.
+The data is not edited here by hand. n8n writes it from the NAS at home, and each
+dashboard reads it when it loads.
 
 ---
 
 ## 📊 Dashboards
 
-| | Dashboard | Qué enseña | Dirección |
+| | Dashboard | What it shows | Address |
 |---|---|---|---|
-| 🏠 | **Resumen** | Una tarjeta por dashboard con sus cifras, y los avisos de lo que ha cambiado | [`/`](https://moilolon.github.io/dashboard/) |
-| 🛒 | **Supermercado** | Cómo cambian los precios de los productos del catálogo en Mercadona y Alcampo | [`/supermercado/`](https://moilolon.github.io/dashboard/supermercado/) |
+| 🏠 | **Summary** | A card per dashboard with its figures, and alerts of what has changed | [`/`](https://moilolon.github.io/dashboard/) |
+| 🛒 | **Groceries** | How the prices of the products in the catalogue change at Mercadona and Alcampo | [`/groceries/`](https://moilolon.github.io/dashboard/groceries/) |
 
 ---
 
-## 🧭 Arquitectura
+## 🧭 Architecture
 
 ```mermaid
 flowchart LR
-    HA["🏠 Home Assistant<br/>lista de la compra"]
-    N8N["🔁 n8n<br/>en el NAS"]
-    TIENDAS["🏪 Mercadona · Alcampo"]
+    HA["🏠 Home Assistant<br/>shopping list"]
+    N8N["🔁 n8n<br/>on the NAS"]
+    STORES["🏪 Mercadona · Alcampo"]
 
-    subgraph PRIV["🔒 asustor-flashstor-6 · privado"]
-        CAT["rama datos/lista-compra<br/>catalogue.json"]
+    subgraph PRIV["🔒 asustor-flashstor-6 · private"]
+        CAT["branch datos/lista-compra<br/>catalogue.json"]
     end
 
-    subgraph PUB["🌍 dashboard · público"]
-        JSON["supermercado/precios.json"]
+    subgraph PUB["🌍 dashboard · public"]
+        JSON["groceries/prices.json"]
         WEB["📊 GitHub Pages"]
     end
 
-    HA -- "altas y cambios" --> N8N
-    TIENDAS -- "precios, una vez por semana" --> N8N
-    N8N -- "catálogo completo" --> CAT
-    CAT -- "solo nombre, tienda,<br/>unidad, categoría y precio" --> N8N
-    N8N -- "un punto por cambio de precio" --> JSON
+    HA -- "new products and changes" --> N8N
+    STORES -- "prices, once a week" --> N8N
+    N8N -- "whole catalogue" --> CAT
+    CAT -- "only name, store,<br/>unit, category and price" --> N8N
+    N8N -- "a point per price change" --> JSON
     JSON --> WEB
 ```
 
 > [!NOTE]
-> El catálogo de verdad vive en el repo privado. Aquí solo llega el historial de
-> precios, que es lo que pinta el dashboard.
+> The real catalogue lives in the private repo. Only the price history gets here, which
+> is what the dashboard draws.
 
 ---
 
-## 📁 Estructura
+## 📁 Structure
 
 ```text
 dashboard/
-├── 🏠 index.html          Resumen: una tarjeta por dashboard y los avisos
-├── 🎨 estilos.css         Estilos comunes: temas frío y cálido, claro y oscuro
-├── 🧩 comun.js            Menú, ajustes, formatos y gráficas que comparten todos
-├── 🛒 supermercado/       Dashboard de precios de la compra
+├── 🏠 index.html          Summary: a card per dashboard and the alerts
+├── 🎨 styles.css          Shared styles: cool and warm themes, light and dark
+├── 🧩 common.js           Settings, language, menu, formats and charts shared by all
+├── 🌍 i18n.js             The texts of the site, in English and Spanish
+├── 🛒 groceries/          Dashboard of grocery prices
 │   ├── index.html
-│   ├── panel.js           Lee precios.json y pinta
-│   └── precios.json       Los datos: los escribe n8n
-├── 🤖 robots.txt          Pide a los buscadores que no indexen el sitio
-└── 📄 .nojekyll           Hace que GitHub sirva los ficheros tal cual
+│   ├── dashboard.js       Reads prices.json and draws
+│   └── prices.json        The data: n8n writes it
+├── 🤖 robots.txt          Asks search engines not to index the site
+└── 📄 .nojekyll           Makes GitHub serve the files as they are
 ```
 
-| Si quieres… | Ve a |
+| If you want to… | Go to |
 |---|---|
-| Ver los dashboards | [moilolon.github.io/dashboard](https://moilolon.github.io/dashboard/) |
-| Cambiar los colores o el aspecto de todo | [`estilos.css`](estilos.css) |
-| Cambiar el menú o los ajustes | [`comun.js`](comun.js) |
-| Cambiar el dashboard del supermercado | [`supermercado/panel.js`](supermercado/panel.js) |
-| Añadir un dashboard | [Cómo está hecho](#-cómo-está-hecho) |
+| See the dashboards | [moilolon.github.io/dashboard](https://moilolon.github.io/dashboard/) |
+| Change the colours or the look of everything | [`styles.css`](styles.css) |
+| Change the menu or the settings | [`common.js`](common.js) |
+| Change or translate a text | [`i18n.js`](i18n.js) |
+| Change the groceries dashboard | [`groceries/dashboard.js`](groceries/dashboard.js) |
+| Add a dashboard | [How it works](#-how-it-works) |
 
 ---
 
-## 🚀 Cómo está hecho
+## 🚀 How it works
 
 <details>
-<summary><b>1 · Publicación</b></summary>
+<summary><b>1 · Publishing</b></summary>
 
-GitHub Pages sirve la raíz de la rama `main` (*Settings → Pages → Deploy from a
-branch*). Cada commit se publica solo en alrededor de un minuto; GitHub lo enseña en
-*Actions* como «pages build and deployment». No hay workflows propios.
+GitHub Pages serves the root of the `main` branch (*Settings → Pages → Deploy from a
+branch*). Every commit is published on its own in about a minute; GitHub shows it under
+*Actions* as "pages build and deployment". There are no workflows of its own.
 
 </details>
 
 <details>
-<summary><b>2 · Un dashboard por carpeta</b></summary>
+<summary><b>2 · One dashboard per folder</b></summary>
 
-Cada dashboard es una carpeta con su `index.html`, su JavaScript y su fichero de datos.
-La página carga `../estilos.css` y `../comun.js`, pide su JSON al cargar y pinta en el
-navegador. Las gráficas son SVG hecho a mano: no hay bibliotecas ni dependencias que
-actualizar.
-
-</details>
-
-<details>
-<summary><b>3 · Menú y ajustes</b></summary>
-
-`comun.js` pinta el menú en todas las páginas a partir de una lista, y el panel de
-**Ajustes**: tema frío o cálido, modo automático, claro u oscuro, menú lateral o
-arriba, y ancho completo o estrecho. Los ajustes se guardan en el navegador de cada
-uno, no en el repo.
+Each dashboard is a folder with its `index.html`, its JavaScript and its data file. The
+page loads `../styles.css`, `../i18n.js` and `../common.js`, fetches its JSON on load
+and draws in the browser. The charts are hand-written SVG: there are no libraries or
+dependencies to update.
 
 </details>
 
 <details>
-<summary><b>4 · Añadir un dashboard</b></summary>
+<summary><b>3 · Menu and settings</b></summary>
 
-1. Crear una carpeta con su `index.html`, cargando `../estilos.css` y `../comun.js`.
-2. Dejar sus datos en un JSON dentro de la carpeta.
-3. Añadir su entrada a la lista `MENU` de `comun.js`.
-4. Añadir su tarjeta al resumen, en `index.html`, y su fila a la tabla de
+`common.js` draws the menu on every page from a list, and the **Settings** panel:
+language, cool or warm theme, automatic, light or dark mode, menu on the side or at the
+top, and full or narrow width. The settings are saved in each visitor's browser, not in
+the repo.
+
+</details>
+
+<details>
+<summary><b>4 · Languages</b></summary>
+
+The site is in English and Spanish. It starts in the language of the browser and it is
+changed in **Settings**. Every text lives in `i18n.js`, once per language, and the
+pages ask for it by key: `data-i18n="groceries.products"` in the HTML and
+`t('groceries.products')` in JavaScript. Numbers and dates follow the language too.
+
+Product names and categories are not translated: they come with the data, as they are
+written in the catalogue.
+
+</details>
+
+<details>
+<summary><b>5 · Embedding a dashboard</b></summary>
+
+Adding `?embed=1` to an address hides the menu, to show the page inside another one,
+such as a Home Assistant view. The same address can fix the settings of that frame,
+without touching the saved ones:
+
+```text
+https://moilolon.github.io/dashboard/groceries/?embed=1&lang=es&mode=dark
+```
+
+It accepts `lang` (`en`, `es`), `theme` (`cool`, `warm`), `mode` (`auto`, `light`,
+`dark`) and `width` (`narrow`, `full`).
+
+</details>
+
+<details>
+<summary><b>6 · Adding a dashboard</b></summary>
+
+1. Create a folder with its `index.html`, loading `../styles.css`, `../i18n.js` and
+   `../common.js`.
+2. Leave its data in a JSON file inside the folder.
+3. Add its entry to the `MENU` list in `common.js`.
+4. Add its texts to `i18n.js`, in both languages.
+5. Add its card to the summary, in `index.html`, and its row to the table of
    [Dashboards](#-dashboards-1).
 
 </details>
 
 <details>
-<summary><b>5 · Probarlo en local</b></summary>
+<summary><b>7 · Trying it locally</b></summary>
 
-Hace falta un servidor, porque el navegador no deja leer el JSON abriendo el fichero
-directamente:
+A server is needed, because the browser does not allow reading the JSON by opening the
+file directly:
 
 ```bash
 python -m http.server 8765
 ```
 
-Y abrir `http://localhost:8765/`.
+Then open `http://localhost:8765/`.
 
 </details>
 
 ---
 
-## 🗂️ Los datos
+## 🗂️ The data
 
-Los escribe n8n con la GitHub App `moilolon-datos`, al terminar cada lectura de precios
-en la tienda: Mercadona los lunes y Alcampo los martes. Sus commits se llaman
-`Precios: N cambios`.
+n8n writes it with the GitHub App `moilolon-datos`, at the end of each reading of the
+prices at the store: Mercadona on Mondays and Alcampo on Tuesdays. Its commits are named
+`Prices: N changes`.
 
-`supermercado/precios.json` guarda **un punto por producto solo cuando su precio
-cambia**:
+`groceries/prices.json` keeps **a point per product only when its price changes**:
 
 ```json
-{ "actualizado": "2026-11-12",
-  "productos": { "mercadona:4706": {
-    "nombre": "Aceite de oliva", "tienda": "Mercadona", "unidad": "ud",
-    "categoria": "Aceite, especias y salsas", "activo": true,
-    "precios": [["2026-11-12", 5.25]] } } }
+{ "updated": "2026-11-12",
+  "products": { "mercadona:4706": {
+    "name": "Aceite de oliva", "store": "Mercadona", "unit": "ud",
+    "category": "Aceite, especias y salsas", "active": true,
+    "prices": [["2026-11-12", 5.25]] } } }
 ```
 
-| Campo | Qué es |
+| Field | What it is |
 |---|---|
-| Clave | La tienda y el código del producto en ella. Un cambio de nombre no parte el historial |
-| `unidad` | `ud` o `kg`: el precio es por unidad o por kilo |
-| `activo` | `false` cuando el producto sale del catálogo; deja de pintarse y conserva su historial |
-| `precios` | Pares de fecha y precio. Un precio vale hasta el punto siguiente |
+| Key | The store and the code of the product in it. Renaming a product does not split its history |
+| `unit` | `ud` or `kg`: the price is per unit or per kilo |
+| `active` | `false` when the product leaves the catalogue; it stops being drawn and keeps its history |
+| `prices` | Pairs of date and price. A price holds until the next point |
 
 ---
 
-## 🔓 Qué es público
+## 🔓 What is public
 
-Este repo y su sitio son **públicos**. Por eso aquí solo llegan el nombre, la tienda,
-el código en la tienda, la unidad, la categoría y los precios. Las cantidades, las
-sugerencias y el resto del catálogo se quedan en el repo privado.
+This repo and its site are **public**. That is why only the name, the store, the code
+in the store, the unit, the category and the prices get here. The quantities, the
+suggestions and the rest of the catalogue stay in the private repo.
 
 > [!IMPORTANT]
-> Lo que se publica aquí queda en el historial aunque luego se borre. Antes de añadir
-> un dato nuevo a un dashboard, hay que decidir si puede ser público.
+> Whatever is published here stays in the history even if it is deleted later. Before
+> adding a new piece of data to a dashboard, decide whether it can be public.
 
 ---
 
 <div align="center">
-<sub>Las páginas piden a los buscadores que no las indexen, pero cualquiera con la dirección puede verlas.</sub>
+<sub>The pages ask search engines not to index them, but anyone with the address can see them.</sub>
 </div>
