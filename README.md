@@ -2,11 +2,11 @@
 
 # 📊 Dashboards
 
-**Dashboards of home data, served with GitHub Pages**
+**Dashboards of home data, served with Vercel**
 
-[![Open the dashboards](https://img.shields.io/badge/Open%20the%20dashboards-moilolon.github.io%2Fdashboard-1F6FEB?style=for-the-badge&logo=githubpages&logoColor=white)](https://moilolon.github.io/dashboard/)
+[![Open the dashboards](https://img.shields.io/badge/Open%20the%20dashboards-dashboard.moilolon.com-1F6FEB?style=for-the-badge&logo=vercel&logoColor=white)](https://dashboard.moilolon.com/)
 
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-main%20branch-222222?style=for-the-badge&logo=github&logoColor=white)](https://pages.github.com/)
+[![Vercel](https://img.shields.io/badge/Vercel-main%20branch-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
 [![No build](https://img.shields.io/badge/HTML%20%C2%B7%20CSS%20%C2%B7%20JS-no%20build-E34F26?style=for-the-badge&logo=html5&logoColor=white)](#-how-it-works)
 [![n8n](https://img.shields.io/badge/Data-n8n-EA4B71?style=for-the-badge&logo=n8n&logoColor=white)](https://n8n.io/)
 [![Home Assistant](https://img.shields.io/badge/Source-Home%20Assistant-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/)
@@ -36,8 +36,8 @@ dashboard reads it when it loads.
 
 | | Dashboard | What it shows | Address |
 |---|---|---|---|
-| 🏠 | **Summary** | A card per dashboard with its figures, and alerts of what has changed | [`/`](https://moilolon.github.io/dashboard/) |
-| 🛒 | **Groceries** | How the prices of the products in the catalogue change at Mercadona and Alcampo | [`/groceries/`](https://moilolon.github.io/dashboard/groceries/) |
+| 🏠 | **Summary** | A card per dashboard with its figures, and alerts of what has changed | [`/`](https://dashboard.moilolon.com/) |
+| 🛒 | **Groceries** | How the prices of the products in the catalogue change at Mercadona and Alcampo | [`/groceries/`](https://dashboard.moilolon.com/groceries/) |
 
 ---
 
@@ -55,7 +55,7 @@ flowchart LR
 
     subgraph PUB["🌍 dashboard · public"]
         JSON["groceries/prices.json"]
-        WEB["📊 GitHub Pages"]
+        WEB["📊 Vercel"]
     end
 
     HA -- "new products and changes" --> N8N
@@ -84,13 +84,12 @@ dashboard/
 │   ├── index.html
 │   ├── dashboard.js       Reads prices.json and draws
 │   └── prices.json        The data: n8n writes it
-├── 🤖 robots.txt          Asks search engines not to index the site
-└── 📄 .nojekyll           Makes GitHub serve the files as they are
+└── 🤖 robots.txt          Asks search engines not to index the site
 ```
 
 | If you want to… | Go to |
 |---|---|
-| See the dashboards | [moilolon.github.io/dashboard](https://moilolon.github.io/dashboard/) |
+| See the dashboards | [dashboard.moilolon.com](https://dashboard.moilolon.com/) |
 | Change the colours or the look of everything | [`styles.css`](styles.css) |
 | Change the menu or the settings | [`common.js`](common.js) |
 | Change or translate a text | [`i18n.js`](i18n.js) |
@@ -104,9 +103,11 @@ dashboard/
 <details>
 <summary><b>1 · Publishing</b></summary>
 
-GitHub Pages serves the root of the `main` branch (*Settings → Pages → Deploy from a
-branch*). Every commit is published on its own in about a minute; GitHub shows it under
-*Actions* as "pages build and deployment". There are no workflows of its own.
+Vercel serves the root of the `main` branch as it is, with no framework and no build
+command, at `dashboard.moilolon.com`. The project is connected to this repo, so every
+commit is published on its own in a few seconds, including the ones n8n makes.
+
+`common.js` loads Vercel Web Analytics and Speed Insights on the published site only.
 
 </details>
 
@@ -151,7 +152,7 @@ such as a Home Assistant view. The same address can fix the settings of that fra
 without touching the saved ones:
 
 ```text
-https://moilolon.github.io/dashboard/groceries/?embed=1&lang=es&mode=dark
+https://dashboard.moilolon.com/groceries/?embed=1&lang=es&mode=dark
 ```
 
 It accepts `lang` (`en`, `es`), `theme` (`cool`, `warm`), `mode` (`auto`, `light`,

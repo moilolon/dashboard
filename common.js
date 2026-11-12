@@ -69,6 +69,21 @@ function saveSetting(key, value) {
 // Applied as early as possible, so the page does not flash in another theme.
 applySettings(readSettings());
 
+// ---------------------------------------------------------------- Visits and speed
+
+// Vercel Web Analytics and Speed Insights, loaded only on the published site. Both are
+// enabled per project in Vercel; until then their scripts are simply not found.
+if (location.hostname === 'dashboard.moilolon.com') {
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+  for (const src of ['/_vercel/insights/script.js', '/_vercel/speed-insights/script.js']) {
+    const script = document.createElement('script');
+    script.defer = true;
+    script.src = src;
+    document.head.appendChild(script);
+  }
+}
+
 // ---------------------------------------------------------------- Language
 
 const LANG = readSettings().lang;
