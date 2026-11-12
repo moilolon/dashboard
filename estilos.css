@@ -1,0 +1,159 @@
+/* Estilos comunes de todos los paneles. Los colores van por papel (superficie, texto,
+   serie, estado) y cambian en un solo sitio entre claro y oscuro. */
+
+:root {
+  color-scheme: light;
+  --fondo: #f3f2ef;
+  --superficie: #fcfcfb;
+  --borde: #e3e1db;
+  --texto: #0b0b0b;
+  --texto-2: #52514e;
+  --texto-3: #7d7b75;
+  --rejilla: #e9e7e1;
+  --serie-1: #2a78d6;
+  --sube: #d03b3b;
+  --baja: #0ca30c;
+  --radio: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --fondo: #111110;
+    --superficie: #1a1a19;
+    --borde: #2e2e2b;
+    --texto: #f0efec;
+    --texto-2: #c3c2b7;
+    --texto-3: #8f8e85;
+    --rejilla: #2a2a27;
+    --serie-1: #3987e5;
+    --sube: #e66767;
+    --baja: #0ca30c;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+a { color: inherit; }
+
+.pagina {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+.cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+  margin-bottom: 20px;
+}
+
+.cabecera h1 { margin: 0; font-size: 26px; }
+.cabecera .miga { color: var(--texto-3); text-decoration: none; }
+.cabecera .miga:hover { text-decoration: underline; }
+.cabecera .nota { color: var(--texto-3); margin-left: auto; font-size: 13px; }
+
+.tarjeta {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 16px;
+}
+
+.tarjeta h2 { margin: 0 0 4px; font-size: 16px; }
+.tarjeta .sub { margin: 0 0 12px; color: var(--texto-3); font-size: 13px; }
+
+.rejilla { display: grid; gap: 12px; }
+.rejilla.cifras { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin-bottom: 12px; }
+.rejilla.dos { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); align-items: start; margin-bottom: 12px; }
+
+.cifra .rotulo { color: var(--texto-3); font-size: 13px; }
+.cifra .valor { font-size: 28px; font-weight: 650; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.cifra .detalle { color: var(--texto-2); font-size: 13px; }
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.filtros input, .filtros select, .boton {
+  font: inherit;
+  color: var(--texto);
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  padding: 7px 14px;
+}
+
+.filtros input { flex: 1 1 220px; min-width: 0; }
+.boton { cursor: pointer; }
+.boton:hover { border-color: var(--texto-3); }
+
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--rejilla); }
+th { color: var(--texto-3); font-weight: 500; font-size: 13px; }
+td.num, th.num { text-align: right; white-space: nowrap; }
+tr.fila { cursor: pointer; }
+tr.fila:hover td { background: color-mix(in srgb, var(--serie-1) 8%, transparent); }
+tr.grupo td { color: var(--texto-3); font-size: 13px; padding-top: 16px; border-bottom-color: var(--borde); }
+.tabla-ancha { overflow-x: auto; }
+
+/* Subida y bajada: el color nunca va solo, siempre con su flecha y su cifra. */
+.cambio { white-space: nowrap; color: var(--texto-2); }
+.cambio .flecha { font-size: 11px; margin-right: 3px; }
+.cambio.sube .flecha { color: var(--sube); }
+.cambio.baja .flecha { color: var(--baja); }
+
+.vacio { color: var(--texto-3); padding: 12px 0; }
+
+.grafica { position: relative; }
+.grafica svg { display: block; width: 100%; height: auto; overflow: visible; }
+.grafica .eje text { fill: var(--texto-3); font-size: 11px; }
+.grafica .rejilla-y { stroke: var(--rejilla); stroke-width: 1; }
+.grafica .linea { fill: none; stroke: var(--serie-1); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.grafica .punto { fill: var(--serie-1); stroke: var(--superficie); stroke-width: 2; }
+.grafica .cursor { stroke: var(--texto-3); stroke-width: 1; stroke-dasharray: 3 3; }
+.grafica .globo {
+  position: absolute;
+  pointer-events: none;
+  background: var(--texto);
+  color: var(--superficie);
+  border-radius: 8px;
+  padding: 5px 9px;
+  font-size: 12px;
+  white-space: nowrap;
+  transform: translate(-50%, -130%);
+}
+
+.chispa { width: 90px; height: 24px; display: block; }
+.chispa path { fill: none; stroke: var(--serie-1); stroke-width: 1.5; }
+
+.paneles { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.panel { display: block; text-decoration: none; }
+.panel:hover { border-color: var(--texto-3); }
+.panel .icono { font-size: 28px; }
+.panel h2 { margin-top: 8px; }
+
+.pie { margin-top: 28px; color: var(--texto-3); font-size: 13px; }
+
+dialog {
+  width: min(720px, calc(100vw - 24px));
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: var(--superficie);
+  color: var(--texto);
+  padding: 18px;
+}
+dialog::backdrop { background: rgb(0 0 0 / 0.45); }
+dialog .cierre { float: right; }
