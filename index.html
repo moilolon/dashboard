@@ -1,73 +1,75 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>Dashboards</title>
-  <link rel="stylesheet" href="estilos.css">
-  <script src="comun.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="i18n.js"></script>
+  <script src="common.js"></script>
 </head>
-<body data-raiz="" data-pagina="resumen">
+<body data-root="" data-page="summary">
   <aside id="menu"></aside>
 
-  <main class="pagina">
-    <div class="titulo" id="titular"><span class="punto"></span>Resumen</div>
-    <div class="avisos" id="avisos"></div>
+  <main class="page">
+    <div class="title" id="headline"><span class="dot"></span><span data-i18n="summary.title">Summary</span></div>
+    <div class="alerts" id="alerts"></div>
 
-    <!-- Un dashboard nuevo es una tarjeta aquí, su entrada en el menú de comun.js y su carpeta. -->
-    <div class="seccion">Compra</div>
-    <div class="rejilla resumen">
-      <a class="tarjeta resumen" href="supermercado/" id="tarjeta-supermercado">
-        <div class="cab">
+    <!-- A new dashboard is a card here, its entry in the menu of common.js and its folder. -->
+    <div class="section" data-i18n="menu.shopping">Shopping</div>
+    <div class="grid summary">
+      <a class="card summary" href="groceries/" id="groceries-card">
+        <div class="head">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11h10.2L20 7H6.2"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></svg>
-          <h2>Supermercado</h2><span class="hueco"></span><span class="punto" id="super-punto"></span>
+          <h2 data-i18n="menu.groceries">Groceries</h2><span class="spacer"></span><span class="dot" id="groceries-dot"></span>
         </div>
-        <div class="cifra">
-          <div class="valor" id="super-valor">—</div>
-          <div class="sub" id="super-sub">Cargando los precios…</div>
+        <div class="stat">
+          <div class="value" id="groceries-value">—</div>
+          <div class="sub" id="groceries-sub" data-i18n="summary.loading">Loading prices…</div>
         </div>
-        <div class="lineas" id="super-lineas"></div>
-        <div class="pie" id="super-pie"></div>
+        <div class="lines" id="groceries-lines"></div>
+        <div class="foot" id="groceries-foot"></div>
       </a>
     </div>
   </main>
 
   <script>
+    applyTexts();
     (async () => {
-      let datos;
-      try { datos = await cargarPrecios(''); } catch (error) {
-        $('super-sub').textContent = 'No se han podido cargar los precios.';
+      let data;
+      try { data = await loadPrices(''); } catch (error) {
+        $('groceries-sub').textContent = t('summary.loadError');
         return;
       }
-      const hoy = datos.actualizado;
-      const semana = restarDias(hoy, 7);
-      const lista = datos.lista;
-      const cesta = lista.reduce((suma, p) => suma + p.precios.at(-1)[1], 0);
-      const cambiados = lista
-        .map((p) => ({ p, antes: precioEn(p, semana) ?? p.precios[0][1], ahora: p.precios.at(-1)[1] }))
-        .filter((c) => c.antes !== c.ahora)
-        .sort((a, b) => Math.abs(b.ahora - b.antes) / b.antes - Math.abs(a.ahora - a.antes) / a.antes);
-      const suben = cambiados.filter((c) => c.ahora > c.antes).length;
-      const bajan = cambiados.length - suben;
-      const antesCesta = lista.reduce((suma, p) => suma + (precioEn(p, semana) ?? p.precios[0][1]), 0);
+      const today = data.updated;
+      const weekAgo = minusDays(today, 7);
+      const list = data.list;
+      const basket = list.reduce((sum, p) => sum + p.prices.at(-1)[1], 0);
+      const changed = list
+        .map((p) => ({ p, before: priceAt(p, weekAgo) ?? p.prices[0][1], now: p.prices.at(-1)[1] }))
+        .filter((c) => c.before !== c.now)
+        .sort((a, b) => Math.abs(b.now - b.before) / b.before - Math.abs(a.now - a.before) / a.before);
+      const up = changed.filter((c) => c.now > c.before).length;
+      const down = changed.length - up;
+      const basketBefore = list.reduce((sum, p) => sum + (priceAt(p, weekAgo) ?? p.prices[0][1]), 0);
 
-      const estado = !cambiados.length ? 'bien' : cesta > antesCesta ? 'aviso' : 'bien';
-      $('titular').innerHTML = `<span class="punto ${estado}"></span>${cambiados.length ? `${cambiados.length} ${cambiados.length === 1 ? 'precio ha cambiado' : 'precios han cambiado'} en los últimos 7 días` : 'Sin cambios de precio en los últimos 7 días'}`;
-      $('avisos').innerHTML = cambiados.slice(0, 6).map((c) => `<a class="chip" href="supermercado/?p=${encodeURIComponent(c.p.id)}"><b>${esc(c.p.nombre)}</b>${cambio(c.antes, c.ahora, true)}<span class="de">${esc(c.p.tienda)}</span></a>`).join('')
-        + (cambiados.length > 6 ? `<a class="chip" href="supermercado/"><span class="de">y ${cambiados.length - 6} más</span></a>` : '');
+      const status = changed.length && basket > basketBefore ? 'warn' : 'ok';
+      $('headline').innerHTML = `<span class="dot ${status}"></span>${changed.length ? t('summary.changed', { n: changed.length }) : t('summary.noChanges')}`;
+      $('alerts').innerHTML = changed.slice(0, 6).map((c) => `<a class="chip" href="groceries/?p=${encodeURIComponent(c.p.id)}"><b>${esc(c.p.name)}</b>${change(c.before, c.now, true)}<span class="of">${esc(c.p.store)}</span></a>`).join('')
+        + (changed.length > 6 ? `<a class="chip" href="groceries/"><span class="of">${t('summary.more', { n: changed.length - 6 })}</span></a>` : '');
 
-      const porTienda = {};
-      lista.forEach((p) => { porTienda[p.tienda] = (porTienda[p.tienda] || 0) + 1; });
-      $('super-punto').className = `punto ${estado}`;
-      $('super-valor').textContent = euros.format(cesta);
-      $('super-sub').textContent = `cuesta la cesta de ${lista.length} productos`;
-      $('super-lineas').innerHTML = [
-        cambiados.length ? `En 7 días: ${cambio(antesCesta, cesta) || 'la cesta no cambia'}` : 'La cesta no ha cambiado en 7 días',
-        cambiados.length ? `${suben} ▲ suben · ${bajan} ▼ bajan` : '',
-        Object.entries(porTienda).map(([tienda, n]) => `${esc(tienda)} ${n}`).join(' · '),
-      ].filter(Boolean).map((l) => `<div>${l}</div>`).join('');
-      $('super-pie').textContent = `Actualizado ${hace(hoy)}`;
+      const perStore = {};
+      list.forEach((p) => { perStore[p.store] = (perStore[p.store] || 0) + 1; });
+      $('groceries-dot').className = `dot ${status}`;
+      $('groceries-value').textContent = money.format(basket);
+      $('groceries-sub').textContent = t('summary.basket', { n: list.length });
+      $('groceries-lines').innerHTML = [
+        changed.length ? t('summary.in7', { change: change(basketBefore, basket) || t('summary.basketSame') }) : t('summary.basketUnchanged'),
+        changed.length ? t('summary.upDown', { up, down }) : '',
+        Object.entries(perStore).map(([store, n]) => `${esc(store)} ${n}`).join(' · '),
+      ].filter(Boolean).map((line) => `<div>${line}</div>`).join('');
+      $('groceries-foot').textContent = t('summary.updated', { when: ago(today) });
     })();
   </script>
 </body>
