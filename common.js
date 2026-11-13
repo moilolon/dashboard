@@ -27,8 +27,28 @@ function validSettings(values) {
   return valid;
 }
 
+// Language and mode are shared with the other sites under moilolon.com through two
+// cookies of the whole domain: moilolon-lang (en, es) and moilolon-theme (light, dark),
+// which is the mode here. A cookie wins over what was saved for this site alone. The
+// automatic mode has no cookie: choosing it removes moilolon-theme.
+const SHARED = /(^|\.)moilolon\.com$/.test(location.hostname);
+
+function sharedSettings() {
+  const read = (name) => (document.cookie.match(new RegExp(`(?:^|; )moilolon-${name}=([^;]*)`)) || [])[1];
+  return validSettings({ lang: read('lang'), mode: read('theme') });
+}
+
+function shareSetting(key, value) {
+  const cookies = { lang: 'lang', mode: 'theme' };
+  if (!SHARED || !cookies[key]) return;
+  const keep = value !== 'auto';
+  document.cookie = `moilolon-${cookies[key]}=${keep ? value : ''}; domain=.moilolon.com; path=/; max-age=${keep ? 31536000 : 0}; samesite=lax; secure`;
+}
+
 function storedSettings() {
-  try { return validSettings(JSON.parse(localStorage.getItem('settings') || '{}')); } catch (error) { return {}; }
+  let saved = {};
+  try { saved = validSettings(JSON.parse(localStorage.getItem('settings') || '{}')); } catch (error) { /* no storage */ }
+  try { return { ...saved, ...sharedSettings() }; } catch (error) { return saved; }
 }
 
 // A page opened with ?embed=1 (inside Home Assistant, for instance) hides the menu, and
@@ -60,6 +80,7 @@ function applySettings(settings) {
 function saveSetting(key, value) {
   const settings = { ...storedSettings(), [key]: value };
   try { localStorage.setItem('settings', JSON.stringify(settings)); } catch (error) { /* no storage: it holds for this visit only */ }
+  shareSetting(key, value);
   // Every text and format depends on the language: the simplest is to load again.
   if (key === 'lang') { location.reload(); return; }
   applySettings(readSettings());
