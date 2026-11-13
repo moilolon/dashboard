@@ -135,7 +135,14 @@ function renderMenu() {
   }
 
   menu.className = 'menu';
-  menu.innerHTML = `<a class="brand" href="${root || './'}">${icon('brand')}Dashboards</a>`
+  // The name of the site is the switcher shared with the other sites under moilolon.com.
+  // Its script comes from there; until it loads, or if it does not, the link shows.
+  const nav = document.createElement('script');
+  nav.defer = true;
+  nav.src = 'https://moilolon.com/nav.js';
+  document.head.appendChild(nav);
+
+  menu.innerHTML = `<div class="brand">${icon('brand')}<moilolon-nav current="dashboard"><a href="${root || './'}">Dashboards</a></moilolon-nav></div>`
     + MENU.map((g) => `<div class="group">${t(g.group)}</div>` + g.entries.map((e) => `<a class="item${e.id === page ? ' current' : ''}" href="${root}${e.path || './'}">${icon(e.icon)}${t(e.title)}</a>`).join('')).join('')
     + `<div class="bottom">
         <a class="item" href="https://github.com/moilolon/dashboard">${icon('code')}${t('menu.code')}</a>

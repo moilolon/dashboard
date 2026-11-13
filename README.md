@@ -129,6 +129,11 @@ language, cool or warm theme, automatic, light or dark mode, menu on the side or
 top, and full or narrow width. The settings are saved in each visitor's browser, not in
 the repo.
 
+The name of the site, at the start of the menu, is the switcher shared by every site
+under `moilolon.com`: it opens the list of them. It is the `<moilolon-nav>` element,
+loaded from `https://moilolon.com/nav.js` and kept in the
+[`home`](https://github.com/moilolon/home) repo.
+
 </details>
 
 <details>

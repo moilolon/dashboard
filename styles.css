@@ -78,6 +78,9 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: 8px;
 }
 
+/* The site switcher (https://moilolon.com/nav.js) wears the colours of the page. */
+moilolon-nav { --moilolon-nav-surface: var(--surface); --moilolon-nav-text: var(--text); --moilolon-nav-border: var(--border); }
+
 .menu .group {
   color: var(--text-3);
   font-size: 10px;
