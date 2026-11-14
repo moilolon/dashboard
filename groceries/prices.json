@@ -1,5 +1,5 @@
 {
-"updated": "2026-11-13",
+"updated": "2026-11-14",
 "products": {
 "mercadona:86652": {"name":"Abrillantador lavavajillas","store":"Mercadona","unit":"ud","category":"Limpieza y hogar","active":true,"prices":[["2026-11-12",3.95]]},
 "mercadona:4706": {"name":"Aceite de oliva","store":"Mercadona","unit":"ud","category":"Aceite, especias y salsas","active":true,"prices":[["2026-11-12",5.25]]},
@@ -85,7 +85,7 @@
 "mercadona:80942": {"name":"Tortillas integrales","store":"Mercadona","unit":"ud","category":"Panadería y pastelería","active":true,"prices":[["2026-11-12",1.55]]},
 "mercadona:14158": {"name":"Tortitas maíz","store":"Mercadona","unit":"ud","category":"Cereales y galletas","active":true,"prices":[["2026-11-12",1.1]]},
 "mercadona:35776": {"name":"Tortitas maíz serrano","store":"Mercadona","unit":"ud","category":"Cereales y galletas","active":true,"prices":[["2026-11-12",1.75]]},
-"mercadona:3313": {"name":"Uvas","store":"Mercadona","unit":"kg","category":"Fruta y verdura","active":true,"prices":[["2026-11-12",4.6]]},
+"mercadona:3313": {"name":"Uvas","store":"Mercadona","unit":"kg","category":"Fruta y verdura","active":true,"prices":[["2026-11-12",4.6],["2026-11-14",5.6]]},
 "mercadona:12753": {"name":"Yogur bebible proteínas","store":"Mercadona","unit":"ud","category":"Postres y yogures","active":true,"prices":[["2026-11-12",2.5]]},
 "mercadona:21358": {"name":"Yogur griego ligero","store":"Mercadona","unit":"ud","category":"Postres y yogures","active":true,"prices":[["2026-11-12",2.1]]},
 "alcampo:53024": {"name":"Yogur natural","store":"Alcampo","unit":"ud","category":"Postres y yogures","active":true,"prices":[["2026-11-12",1.93]]},
