@@ -319,12 +319,19 @@ function lineChart(box, series, options = {}) {
     cursor.setAttribute('x1', cx); cursor.setAttribute('x2', cx); cursor.setAttribute('visibility', 'visible');
     tip.hidden = false;
     tip.textContent = t('chart.since', { value: money.format(current.value), date: shortDate.format(day(current.date)) });
-    tip.style.left = `${(cx / width) * frame.width}px`;
-    tip.style.top = `${(y(current.value) / height) * frame.height}px`;
+    placeTip(tip, (cx / width) * frame.width, (y(current.value) / height) * frame.height, frame.width);
   };
   svg.addEventListener('pointermove', move);
   svg.addEventListener('pointerdown', move);
   svg.addEventListener('pointerleave', () => { cursor.setAttribute('visibility', 'hidden'); tip.hidden = true; });
+}
+
+// Puts a chart tooltip above a point, centred on it but kept inside the chart: near an
+// edge it would stick out, and in a dialog that adds a horizontal scrollbar.
+function placeTip(tip, left, top, frameWidth) {
+  const half = tip.offsetWidth / 2;
+  tip.style.left = `${Math.min(Math.max(left, half), Math.max(frameWidth - half, half))}px`;
+  tip.style.top = `${top}px`;
 }
 
 // Stacked bars: one per group, with a segment per series.
@@ -369,8 +376,7 @@ function barChart(box, groups, series, options = {}) {
     const frame = svg.getBoundingClientRect();
     tip.hidden = false;
     tip.textContent = `${g.label}: ${series.map((s) => `${s.name} ${g.values[s.name] || 0}`).join(' · ')}`;
-    tip.style.left = `${Math.min(Math.max(event.clientX - frame.left, 90), frame.width - 90)}px`;
-    tip.style.top = `${event.clientY - frame.top}px`;
+    placeTip(tip, event.clientX - frame.left, event.clientY - frame.top, frame.width);
   });
   svg.addEventListener('pointerleave', () => { tip.hidden = true; });
 }
