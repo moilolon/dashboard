@@ -1,5 +1,5 @@
 {
-"updated": "2026-11-15",
+"updated": "2026-11-16",
 "products": {
 "mercadona:86652": {"name":"Abrillantador lavavajillas","store":"Mercadona","unit":"ud","category":"Limpieza y hogar","active":true,"prices":[["2026-11-12",3.95]]},
 "mercadona:4706": {"name":"Aceite de oliva","store":"Mercadona","unit":"ud","category":"Aceite, especias y salsas","active":true,"prices":[["2026-11-12",5.25]]},
@@ -45,7 +45,7 @@
 "mercadona:59151": {"name":"Jamón serrano","store":"Mercadona","unit":"ud","category":"Charcutería y quesos","active":true,"prices":[["2026-11-12",2.45]]},
 "mercadona:16395": {"name":"Jamón york","store":"Mercadona","unit":"ud","category":"Charcutería y quesos","active":true,"prices":[["2026-11-12",3.35]]},
 "mercadona:3820": {"name":"Kiwis","store":"Mercadona","unit":"kg","category":"Fruta y verdura","active":true,"prices":[["2026-11-12",4.65]]},
-"mercadona:13091": {"name":"Leche","store":"Mercadona","unit":"ud","category":"Huevos, leche y mantequilla","active":true,"prices":[["2026-11-12",6.84]]},
+"mercadona:13091": {"name":"Leche","store":"Mercadona","unit":"ud","category":"Huevos, leche y mantequilla","active":true,"prices":[["2026-11-12",6.84],["2026-11-16",7.5]]},
 "mercadona:29225": {"name":"Levadura","store":"Mercadona","unit":"ud","category":"Panadería y pastelería","active":true,"prices":[["2026-11-12",2.25]]},
 "mercadona:78031": {"name":"Lima fibra vidrio","store":"Mercadona","unit":"ud","category":"Cuidado facial y corporal","active":true,"prices":[["2026-11-12",1]]},
 "mercadona:43218": {"name":"Limpiacristales","store":"Mercadona","unit":"ud","category":"Limpieza y hogar","active":true,"prices":[["2026-11-12",1.1]]},
