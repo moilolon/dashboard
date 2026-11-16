@@ -55,6 +55,7 @@
 "mercadona:3028": {"name":"Manzanas","store":"Mercadona","unit":"kg","category":"Fruta y verdura","active":true,"prices":[["2026-11-12",2]]},
 "mercadona:3506": {"name":"Melón","store":"Mercadona","unit":"kg","category":"Fruta y verdura","active":true,"prices":[["2026-11-12",2.2]]},
 "mercadona:10453": {"name":"Mini hamburguesas","store":"Mercadona","unit":"kg","category":"Carne","active":true,"prices":[["2026-11-12",11.07]]},
+"alcampo:86482": {"name":"Muesli crunchy","store":"Alcampo","unit":"ud","category":"Cereales y galletas","active":true,"prices":[["2026-11-16",1.9]]},
 "mercadona:35892": {"name":"Muesli crunchy","store":"Mercadona","unit":"ud","category":"Cereales y galletas","active":true,"prices":[["2026-11-12",1.9]]},
 "mercadona:3277": {"name":"Naranjas","store":"Mercadona","unit":"ud","category":"Fruta y verdura","active":true,"prices":[["2026-11-12",4.65]]},
 "mercadona:22311": {"name":"Natillas proteínas","store":"Mercadona","unit":"ud","category":"Postres y yogures","active":true,"prices":[["2026-11-12",1.75]]},
