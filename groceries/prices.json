@@ -1,12 +1,12 @@
 {
-"updated": "2026-11-16",
+"updated": "2026-11-17",
 "products": {
 "alcampo:41079": {"name":"Abrillantador lavavajillas","store":"Alcampo","unit":"ud","category":"Limpieza y hogar","active":true,"prices":[["2026-11-16",4.8]]},
 "eroski:956300": {"name":"Abrillantador lavavajillas","store":"Eroski","unit":"ud","category":"Limpieza y hogar","active":true,"prices":[["2026-11-16",4.45]]},
 "gadis:3530114": {"name":"Abrillantador lavavajillas","store":"Gadis","unit":"ud","category":"Limpieza y hogar","active":true,"prices":[["2026-11-16",4.45]]},
 "mercadona:86652": {"name":"Abrillantador lavavajillas","store":"Mercadona","unit":"ud","category":"Limpieza y hogar","active":true,"prices":[["2026-11-12",3.95]]},
-"eroski:371658": {"name":"Aceite de oliva","store":"Eroski","unit":"ud","category":"Aceite, especias y salsas","active":true,"prices":[["2026-11-16",4.35]]},
-"gadis:7202251": {"name":"Aceite de oliva","store":"Gadis","unit":"ud","category":"Aceite, especias y salsas","active":true,"prices":[["2026-11-16",4.1]]},
+"eroski:371658": {"name":"Aceite de oliva","store":"Eroski","unit":"ud","category":"Aceite, especias y salsas","active":true,"prices":[["2026-11-16",4.35],["2026-11-17",4.1]]},
+"gadis:7202251": {"name":"Aceite de oliva","store":"Gadis","unit":"ud","category":"Aceite, especias y salsas","active":true,"prices":[["2026-11-16",4.1],["2026-11-17",4.09]]},
 "mercadona:4706": {"name":"Aceite de oliva","store":"Mercadona","unit":"ud","category":"Aceite, especias y salsas","active":true,"prices":[["2026-11-12",5.25]]},
 "alcampo:59185": {"name":"Agua","store":"Alcampo","unit":"ud","category":"Agua y refrescos","active":true,"prices":[["2026-11-12",4.02]]},
 "eroski:200642": {"name":"Agua","store":"Eroski","unit":"ud","category":"Agua y refrescos","active":true,"prices":[["2026-11-16",0.73]]},
