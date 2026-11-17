@@ -49,6 +49,7 @@
 "alcampo:434384": {"name":"Compresas","store":"Alcampo","unit":"ud","category":"Cuidado facial y corporal","active":true,"prices":[["2026-11-17",4.22]]},
 "eroski:10735512": {"name":"Compresas","store":"Eroski","unit":"ud","category":"Cuidado facial y corporal","active":true,"prices":[["2026-11-16",4.2]]},
 "mercadona:86353": {"name":"Compresas","store":"Mercadona","unit":"ud","category":"Cuidado facial y corporal","active":true,"prices":[["2026-11-12",4.35]]},
+"mercadona:16883": {"name":"Crema de cacahuete","store":"Mercadona","unit":"ud","category":"Azúcar, caramelos y chocolate","active":true,"prices":[["2026-11-17",2.65]]},
 "gadis:8575037": {"name":"Crema de pies","store":"Gadis","unit":"ud","category":"Cuidado facial y corporal","active":true,"prices":[["2026-11-16",1.1]]},
 "mercadona:46833": {"name":"Crema de pies","store":"Mercadona","unit":"ud","category":"Cuidado facial y corporal","active":true,"prices":[["2026-11-12",1.1]]},
 "mercadona:79501": {"name":"Detergente biberones","store":"Mercadona","unit":"ud","category":"Bebé","active":true,"prices":[["2026-11-12",2.9]]},
