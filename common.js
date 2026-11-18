@@ -236,7 +236,7 @@ function change(before, now, relativeOnly = false) {
 
 // ---------------------------------------------------------------- Prices
 
-const STORES = [{ name: 'Mercadona', cls: 's1' }, { name: 'Alcampo', cls: 's2' }];
+const STORES = [{ name: 'Mercadona', cls: 's1' }, { name: 'Alcampo', cls: 's2' }, { name: 'Gadis', cls: 's3' }, { name: 'Eroski', cls: 's4' }];
 const STORE_CLASS = Object.fromEntries(STORES.map((s) => [s.name, s.cls]));
 
 // The price of a product on a date: the one of the last point on or before it.
@@ -256,16 +256,75 @@ async function loadPrices(root) {
     .map(([id, p]) => ({ id, ...p }))
     .filter((p) => p.active !== false && p.prices.length)
     .sort((a, b) => a.name.localeCompare(b.name, 'es'));
+  data.groups = groupProducts(data.list);
   return data;
 }
 
-// The sum of the prices on every date something changed, from a date on.
+// The price of an offer on a date; before its first point, the first one it had.
+const priceOn = (offer, date) => priceAt(offer, date) ?? offer.prices[0][1];
+
+// An entry of prices.json is an offer: a product at a store. This puts together the
+// offers of each product, by its name in the catalogue.
+//
+// Offers are compared by their reference price (per kilo, per litre…) when all of them
+// give it in the same unit, and by the price of the pack otherwise. Only the current
+// reference price is known, so each offer keeps the factor that turns its price into it.
+function groupProducts(list) {
+  const groups = new Map();
+  for (const offer of list) {
+    if (!groups.has(offer.name)) groups.set(offer.name, { name: offer.name, category: offer.category, unit: offer.unit, offers: [] });
+    groups.get(offer.name).offers.push(offer);
+  }
+  for (const g of groups.values()) {
+    const refs = g.offers.map((o) => (Array.isArray(o.ref) && o.ref[0] > 0 && o.ref[1] ? o.ref : null));
+    g.byRef = g.offers.length > 1 && refs.every((r) => r && r[1] === refs[0][1]);
+    g.offers.forEach((o, i) => {
+      const now = o.prices.at(-1)[1];
+      o.factor = g.byRef && now ? refs[i][0] / now : 1;
+    });
+  }
+  return [...groups.values()];
+}
+
+// What an offer costs on a date in the measure its product is compared by.
+const comparable = (offer, date) => priceOn(offer, date) * offer.factor;
+
+// The cheapest offer of a product on a date.
+function cheapestOffer(product, date) {
+  return product.offers.reduce((best, o) => (comparable(o, date) < comparable(best, date) ? o : best));
+}
+
+// The page of an offer at its store. Gadis has no address by code: its pages are named
+// after the article, so without the name of the article there is no link.
+function storeLink(offer) {
+  const code = encodeURIComponent(offer.id.slice(offer.id.indexOf(':') + 1));
+  switch (offer.store) {
+    case 'Mercadona': return `https://tienda.mercadona.es/product/${code}`;
+    case 'Alcampo': return `https://www.compraonline.alcampo.es/products/${code}`;
+    case 'Eroski': return `https://supermercado.eroski.es/es/productdetail/${code}-x/`;
+    case 'Gadis': {
+      const slug = String(offer.article || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      return slug ? `https://www.gadisline.com/${slug}` : '';
+    }
+    default: return '';
+  }
+}
+
+// What a product cost on a date at its cheapest store then, for the amount that its
+// cheapest offer of today holds. Without that, a product would seem to change price
+// when the cheapest offer passes from a pack of six to a single one.
+function productPrice(product, date, today) {
+  return comparable(cheapestOffer(product, date), date) / cheapestOffer(product, today).factor;
+}
+
+// The basket is each product at its cheapest store: its cost on every date something
+// changed, from a date on.
 function basketSeries(products, from, to) {
   const dates = new Set([from, to]);
-  products.forEach((p) => p.prices.forEach(([d]) => { if (d > from && d <= to) dates.add(d); }));
+  products.forEach((p) => p.offers.forEach((o) => o.prices.forEach(([d]) => { if (d > from && d <= to) dates.add(d); })));
   return [...dates].sort().map((d) => ({
     date: d,
-    value: products.reduce((sum, p) => sum + (priceAt(p, d) ?? p.prices[0][1]), 0),
+    value: products.reduce((sum, p) => sum + productPrice(p, d, to), 0),
   }));
 }
 
@@ -273,35 +332,48 @@ function basketSeries(products, from, to) {
 
 // Step line: a value holds until it changes.
 function lineChart(box, series, options = {}) {
+  linesChart(box, series.length ? [{ cls: options.cls || '', series }] : [], options);
+}
+
+// Several step lines on the same axes.
+//   lines: [{ name: 'Mercadona', cls: 's1', series: [{ date, value }] }]
+// options.to stretches every line up to that date.
+function linesChart(box, lines, options = {}) {
   box.innerHTML = '';
-  if (!series.length) { box.innerHTML = `<p class="empty">${t('chart.noData')}</p>`; return; }
+  const points = lines.flatMap((l) => l.series);
+  if (!points.length) { box.innerHTML = `<p class="empty">${t('chart.noData')}</p>`; return; }
+  const single = lines.length === 1;
   const width = Math.max(box.clientWidth, 280);
   const height = options.height || 210;
   const m = { top: 10, right: 12, bottom: 22, left: 54 };
-  const t0 = day(series[0].date).getTime();
-  const t1 = Math.max(day(series[series.length - 1].date).getTime(), t0 + 86400000);
-  let min = Math.min(...series.map((s) => s.value));
-  let max = Math.max(...series.map((s) => s.value));
+  const times = points.map((s) => day(s.date).getTime());
+  if (options.to) times.push(day(options.to).getTime());
+  const t0 = Math.min(...times);
+  const t1 = Math.max(...times, t0 + 86400000);
+  let min = Math.min(...points.map((s) => s.value));
+  let max = Math.max(...points.map((s) => s.value));
   const slack = (max - min || max * 0.02 || 1) * 0.2;
   min = Math.max(0, min - slack); max += slack;
   const x = (time) => m.left + ((time - t0) / (t1 - t0)) * (width - m.left - m.right);
   const y = (v) => m.top + (1 - (v - min) / (max - min)) * (height - m.top - m.bottom);
 
-  let path = '';
-  series.forEach((s, i) => {
-    const px = x(day(s.date).getTime());
-    path += i === 0 ? `M${px},${y(s.value)}` : `H${px}V${y(s.value)}`;
-  });
-  path += `H${x(t1)}`;
+  const paths = lines.map((l) => {
+    let path = '';
+    l.series.forEach((s, i) => {
+      const px = x(day(s.date).getTime());
+      path += i === 0 ? `M${px},${y(s.value)}` : `H${px}V${y(s.value)}`;
+    });
+    return `<path class="line ${l.cls || ''}" d="${path}H${x(t1)}"/>`;
+  }).join('');
 
-  const cls = options.cls || '';
   const axisY = [0, 0.5, 1].map((f) => min + (max - min) * f).map((v) => `<line class="grid-y" x1="${m.left}" x2="${width - m.right}" y1="${y(v)}" y2="${y(v)}"/><text x="${m.left - 8}" y="${y(v) + 3}" text-anchor="end">${money.format(v)}</text>`).join('');
   const axisX = `<text x="${m.left}" y="${height - 5}">${shortDate.format(new Date(t0))}</text><text x="${width - m.right}" y="${height - 5}" text-anchor="end">${shortDate.format(new Date(t1))}</text>`;
-  const marks = series.length > 1 && series.length <= 40 ? series.slice(1, -1).map((s) => `<circle class="mark ${cls}" r="4" cx="${x(day(s.date).getTime())}" cy="${y(s.value)}"/>`).join('') : '';
+  const first = lines[0];
+  const marks = single && first.series.length > 1 && first.series.length <= 40 ? first.series.slice(1, -1).map((s) => `<circle class="mark ${first.cls || ''}" r="4" cx="${x(day(s.date).getTime())}" cy="${y(s.value)}"/>`).join('') : '';
 
   box.innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(options.title || t('chart.trend'))}">
     <g class="axis">${axisY}${axisX}</g>
-    <path class="line ${cls}" d="${path}"/>${marks}
+    ${paths}${marks}
     <line class="cursor" y1="${m.top}" y2="${height - m.bottom}" visibility="hidden"/>
     <rect x="${m.left}" y="${m.top}" width="${width - m.left - m.right}" height="${height - m.top - m.bottom}" fill="transparent"/>
   </svg><div class="tip" hidden></div>`;
@@ -309,17 +381,29 @@ function lineChart(box, series, options = {}) {
   const svg = box.querySelector('svg');
   const cursor = box.querySelector('.cursor');
   const tip = box.querySelector('.tip');
+  // The point of a line that holds at a time: the last one on or before it.
+  const at = (series, time) => {
+    let current = null;
+    for (const s of series) if (day(s.date).getTime() <= time) current = s;
+    return current;
+  };
   const move = (event) => {
     const frame = svg.getBoundingClientRect();
     const px = ((event.clientX - frame.left) / frame.width) * width;
     const time = t0 + ((px - m.left) / (width - m.left - m.right)) * (t1 - t0);
-    let current = series[0];
-    for (const s of series) if (day(s.date).getTime() <= time) current = s;
     const cx = Math.min(Math.max(px, m.left), width - m.right);
     cursor.setAttribute('x1', cx); cursor.setAttribute('x2', cx); cursor.setAttribute('visibility', 'visible');
     tip.hidden = false;
-    tip.textContent = t('chart.since', { value: money.format(current.value), date: shortDate.format(day(current.date)) });
-    placeTip(tip, (cx / width) * frame.width, (y(current.value) / height) * frame.height, frame.width);
+    let top = m.top + 16;
+    if (single) {
+      const current = at(first.series, time) || first.series[0];
+      tip.textContent = t('chart.since', { value: money.format(current.value), date: shortDate.format(day(current.date)) });
+      top = y(current.value);
+    } else {
+      const when = shortDate.format(new Date(Math.min(Math.max(time, t0), t1)));
+      tip.textContent = `${when} · ${lines.map((l) => [l, at(l.series, time)]).filter(([, p]) => p).map(([l, p]) => `${l.name} ${money.format(p.value)}`).join(' · ')}`;
+    }
+    placeTip(tip, (cx / width) * frame.width, (top / height) * frame.height, frame.width);
   };
   svg.addEventListener('pointermove', move);
   svg.addEventListener('pointerdown', move);

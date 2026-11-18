@@ -22,10 +22,10 @@
       </div>
       <div class="button-group" id="store" role="group" data-i18n-label="groceries.store">
         <button data-store="" class="current" data-i18n="groceries.all">All</button>
-        <button data-store="Mercadona"><span class="dot s1"></span>Mercadona</button>
-        <button data-store="Alcampo"><span class="dot s2"></span>Alcampo</button>
       </div>
       <select class="field" id="category" data-i18n-label="groceries.category"><option value="" data-i18n="groceries.allCategories">All categories</option></select>
+      <select class="field" id="cheapest" data-i18n-label="groceries.cheapestAt"><option value="" data-i18n="groceries.cheapestAny">Cheapest at any store</option></select>
+      <label class="check"><input type="checkbox" id="several"><span data-i18n="groceries.several">In several stores</span></label>
       <input class="field" id="search" type="search" data-i18n-placeholder="groceries.search" data-i18n-label="groceries.search">
       <span class="spacer"></span>
       <span class="note" id="updated"></span>
@@ -36,28 +36,36 @@
     <section class="grid two">
       <div class="card">
         <div class="head"><h2 data-i18n="groceries.basketCost">Basket cost</h2><span class="spacer"></span><button class="link" data-table="basket-table" data-i18n="groceries.showTable">Show table</button></div>
-        <div class="legend" id="basket-legend"></div>
+        <div class="legend"><span><span class="dash"></span><span data-i18n="groceries.basketDetail">each product at its cheapest store</span></span></div>
         <div class="chart" id="basket"></div>
         <div class="wide-table" id="basket-table" hidden></div>
       </div>
       <div class="card">
         <div class="head"><h2 data-i18n="groceries.changesPerWeek">Price changes per week</h2><span class="spacer"></span><button class="link" data-table="weeks-table" data-i18n="groceries.showTable">Show table</button></div>
-        <div class="legend"><span><span class="dot s1"></span>Mercadona</span><span><span class="dot s2"></span>Alcampo</span></div>
+        <div class="legend" id="weeks-legend"></div>
         <div class="chart" id="weeks"></div>
         <div class="wide-table" id="weeks-table" hidden></div>
       </div>
     </section>
 
-    <section class="card">
-      <div class="head"><h2 data-i18n="groceries.products">Products</h2><span class="spacer"></span><span class="minor" data-i18n="groceries.sortNote">Biggest changes in the period first</span></div>
-      <div class="wide-table" id="products"></div>
-    </section>
+    <div class="toolbar">
+      <div class="section" data-i18n="groceries.products">Products</div>
+      <span class="spacer"></span>
+      <select class="field" id="sort" data-i18n-label="groceries.sort">
+        <option value="gap" data-i18n="groceries.sortGap">Biggest difference between stores</option>
+        <option value="change" data-i18n="groceries.sortChange">Biggest change in the period</option>
+        <option value="price" data-i18n="groceries.sortPrice">Cheapest first</option>
+        <option value="name" data-i18n="groceries.sortName">By name</option>
+      </select>
+    </div>
+    <section class="grid products" id="products"></section>
   </main>
 
   <dialog id="detail">
     <button class="field close" id="close" data-i18n="groceries.close">Close</button>
     <h2 id="detail-name"></h2>
     <p class="minor" id="detail-sub"></p>
+    <ul class="offers" id="detail-offers"></ul>
     <div class="chart" id="detail-chart"></div>
     <div class="wide-table" id="detail-table"></div>
   </dialog>
