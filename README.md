@@ -37,7 +37,7 @@ dashboard reads it when it loads.
 | | Dashboard | What it shows | Address |
 |---|---|---|---|
 | 🏠 | **Summary** | A card per dashboard with its figures, and alerts of what has changed | [`/`](https://dashboard.moilolon.com/) |
-| 🛒 | **Groceries** | How the prices of the products in the catalogue change at Mercadona and Alcampo | [`/groceries/`](https://dashboard.moilolon.com/groceries/) |
+| 🛒 | **Groceries** | What each product of the catalogue costs at Mercadona, Alcampo, Gadis and Eroski, which store is cheapest and how the prices change | [`/groceries/`](https://dashboard.moilolon.com/groceries/) |
 
 ---
 
@@ -47,7 +47,7 @@ dashboard reads it when it loads.
 flowchart LR
     HA["🏠 Home Assistant<br/>shopping list"]
     N8N["🔁 n8n<br/>on the NAS"]
-    STORES["🏪 Mercadona · Alcampo"]
+    STORES["🏪 Mercadona · Alcampo<br/>Gadis · Eroski"]
 
     subgraph PRIV["🔒 asustor-flashstor-6 · private"]
         CAT["branch datos/lista-compra<br/>catalogue.json"]
@@ -59,9 +59,9 @@ flowchart LR
     end
 
     HA -- "new products and changes" --> N8N
-    STORES -- "prices, once a week" --> N8N
+    STORES -- "prices" --> N8N
     N8N -- "whole catalogue" --> CAT
-    CAT -- "only name, store,<br/>unit, category and price" --> N8N
+    CAT -- "only what the stores<br/>already show, and the category" --> N8N
     N8N -- "a point per price change" --> JSON
     JSON --> WEB
 ```
@@ -201,33 +201,53 @@ Then open `http://localhost:8765/`.
 ## 🗂️ The data
 
 n8n writes it with the GitHub App `moilolon-datos`, at the end of each reading of the
-prices at the store: Mercadona on Mondays and Alcampo on Tuesdays. Its commits are named
-`Prices: N changes`.
+prices at the stores. Its commits are named `Prices: N changes`.
 
-`groceries/prices.json` keeps **a point per product only when its price changes**:
+`groceries/prices.json` has **an entry per offer**, a product at a store, and keeps **a
+point only when its price changes**:
 
 ```json
 { "updated": "2026-11-12",
   "products": { "mercadona:4706": {
     "name": "Aceite de oliva", "store": "Mercadona", "unit": "ud",
     "category": "Aceite, especias y salsas", "active": true,
+    "article": "Aceite de oliva virgen extra Hacendado", "image": "https://…",
+    "ref": [5.25, "l"],
     "prices": [["2026-11-12", 5.25]] } } }
 ```
 
 | Field | What it is |
 |---|---|
-| Key | The store and the code of the product in it. Renaming a product does not split its history |
+| Key | The store and the code of the article in it. Renaming a product does not split its history |
+| `name` | The product in the catalogue. The offers with the same name are the same product at several stores, and the page draws them on one card |
 | `unit` | `ud` or `kg`: the price is per unit or per kilo |
-| `active` | `false` when the product leaves the catalogue; it stops being drawn and keeps its history |
+| `active` | `false` when the offer leaves the catalogue; it stops being drawn and keeps its history |
+| `article` | The name of the article at the store. Optional |
+| `image` | The address of its photo at the store. Optional |
+| `ref` | Its current reference price and the unit of it: per kilo, per litre… Optional |
 | `prices` | Pairs of date and price. A price holds until the next point |
+
+### Comparing stores
+
+The offers of a product are compared by their reference price when all of them give it
+in the same unit, and by the price of the pack otherwise. The basket is each product at
+its cheapest store.
+
+Each line of a card is a link to the article at its store. The address comes from the
+code, in `storeLink` of `common.js`. Gadis has no address by code: its pages are named
+after the article, so its link comes from `article`.
+
+A new store is a line in `STORES` and a case in `storeLink`, both in `common.js`, and
+its colour in `styles.css`.
 
 ---
 
 ## 🔓 What is public
 
-This repo and its site are **public**. That is why only the name, the store, the code
-in the store, the unit, the category and the prices get here. The quantities, the
-suggestions and the rest of the catalogue stay in the private repo.
+This repo and its site are **public**. That is why only what each store already shows
+of an article gets here (its name, code, photo and prices), with the name, the unit and
+the category it has in the catalogue. The quantities, the suggestions and the rest of
+the catalogue stay in the private repo.
 
 > [!IMPORTANT]
 > Whatever is published here stays in the history even if it is deleted later. Before

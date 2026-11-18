@@ -9,7 +9,7 @@
   --radius: 8px;
   --bg: #f5f6f8; --surface: #ffffff; --border: #e2e5ea; --text: #10141c; --text-2: #4a5160;
   --text-3: #7d8594; --grid: #eceef2; --active: #eef0f4; --total: #3d4350;
-  --series-1: #2a78d6; --series-2: #eb6834; --up: #d03b3b; --down: #0ca30c; --warn: #c98500;
+  --series-1: #2a78d6; --series-2: #eb6834; --series-3: #7a52cc; --series-4: #0e9a8f; --up: #d03b3b; --down: #0ca30c; --warn: #c98500;
 }
 :root[data-theme="warm"] {
   --bg: #f6f6f4; --surface: #ffffff; --border: #e4e3de; --text: #14140f; --text-2: #52514e;
@@ -21,7 +21,7 @@
     color-scheme: dark;
   --bg: #0d1016; --surface: #151922; --border: #272c38; --text: #eceef2; --text-2: #b8bfcc;
   --text-3: #808898; --grid: #222733; --active: #1f2430; --total: #c9cdd6;
-  --series-1: #3987e5; --series-2: #d95926; --up: #e66767; --down: #0ca30c; --warn: #fab219;
+  --series-1: #3987e5; --series-2: #d95926; --series-3: #9b78e6; --series-4: #1fb5a8; --up: #e66767; --down: #0ca30c; --warn: #fab219;
   }
   :root[data-theme="warm"]:not([data-mode="light"]) {
   --bg: #111110; --surface: #1a1a19; --border: #2e2e2b; --text: #f0efec; --text-2: #c3c2b7;
@@ -32,7 +32,7 @@
   color-scheme: dark;
   --bg: #0d1016; --surface: #151922; --border: #272c38; --text: #eceef2; --text-2: #b8bfcc;
   --text-3: #808898; --grid: #222733; --active: #1f2430; --total: #c9cdd6;
-  --series-1: #3987e5; --series-2: #d95926; --up: #e66767; --down: #0ca30c; --warn: #fab219;
+  --series-1: #3987e5; --series-2: #d95926; --series-3: #9b78e6; --series-4: #1fb5a8; --up: #e66767; --down: #0ca30c; --warn: #fab219;
 }
 :root[data-mode="dark"][data-theme="warm"] {
   --bg: #111110; --surface: #1a1a19; --border: #2e2e2b; --text: #f0efec; --text-2: #c3c2b7;
@@ -127,6 +127,8 @@ moilolon-nav { --moilolon-nav-surface: var(--surface); --moilolon-nav-text: var(
 .dot.bad { background: var(--up); }
 .dot.s1 { background: var(--series-1); }
 .dot.s2 { background: var(--series-2); }
+.dot.s3 { background: var(--series-3); }
+.dot.s4 { background: var(--series-4); }
 
 /* Button groups and fields of the filter bar */
 
@@ -207,9 +209,13 @@ tr.row:hover td { background: var(--active); }
 .chart .line { fill: none; stroke: var(--total); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
 .chart .line.s1 { stroke: var(--series-1); }
 .chart .line.s2 { stroke: var(--series-2); }
+.chart .line.s3 { stroke: var(--series-3); }
+.chart .line.s4 { stroke: var(--series-4); }
 .chart .mark { fill: var(--total); stroke: var(--surface); stroke-width: 2; }
 .chart .mark.s1, .chart .bar-s1 { fill: var(--series-1); }
 .chart .mark.s2, .chart .bar-s2 { fill: var(--series-2); }
+.chart .mark.s3, .chart .bar-s3 { fill: var(--series-3); }
+.chart .mark.s4, .chart .bar-s4 { fill: var(--series-4); }
 .chart .cursor { stroke: var(--text-3); stroke-width: 1; stroke-dasharray: 3 3; }
 .chart .tip {
   position: absolute;
@@ -238,6 +244,34 @@ dialog {
 dialog::backdrop { background: rgb(0 0 0 / 0.45); }
 dialog h2 { margin: 0 0 2px; font-size: 16px; }
 dialog .close { float: right; cursor: pointer; }
+
+/* Product cards: a product with its offers, one line per store. */
+
+.toolbar label.check { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); cursor: pointer; }
+.grid.products { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); align-items: start; }
+.product { display: flex; flex-direction: column; gap: 10px; cursor: pointer; }
+.product:hover, .product:focus-visible { border-color: var(--text-3); outline: none; }
+.product .top { display: flex; gap: 12px; align-items: flex-start; }
+.product .photo { width: 72px; height: 72px; flex: none; border-radius: 6px; background: #fff; border: 1px solid var(--border); object-fit: contain; padding: 4px; }
+.product .photo.none { background: var(--active); }
+.product .about { min-width: 0; flex: 1; }
+.product .best { font-size: 20px; font-weight: 650; font-variant-numeric: tabular-nums; margin-top: 4px; line-height: 1.2; }
+.product .best .minor { font-weight: 400; }
+.product .side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex: none; }
+.product .spark { width: 64px; }
+
+.offers { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--grid); }
+.offers li { border-bottom: 1px solid var(--grid); }
+.offers li:last-child { border-bottom: 0; }
+.offer { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; padding: 7px 4px; border-radius: 4px; font-variant-numeric: tabular-nums; }
+a.offer:hover { background: var(--active); }
+.offer .store { display: flex; align-items: center; gap: 6px; font-weight: 600; min-width: 0; }
+.offer .store svg { width: 11px; height: 11px; flex: none; fill: none; stroke: var(--text-3); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.offer .price { text-align: right; font-weight: 600; white-space: nowrap; }
+.offer .article { color: var(--text-3); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.offer .gap { text-align: right; font-size: 11px; color: var(--text-2); white-space: nowrap; }
+.offer .gap.least { color: var(--down); font-weight: 600; }
+dialog .offers { margin: 10px 0; }
 
 /* On narrow screens the menu becomes a bar at the top. */
 @media (max-width: 800px) {

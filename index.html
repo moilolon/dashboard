@@ -45,14 +45,16 @@
       const today = data.updated;
       const weekAgo = minusDays(today, 7);
       const list = data.list;
-      const basket = list.reduce((sum, p) => sum + p.prices.at(-1)[1], 0);
+      // The basket is each product at its cheapest store; the changes are of every offer.
+      const groups = data.groups;
+      const basket = groups.reduce((sum, p) => sum + productPrice(p, today, today), 0);
       const changed = list
         .map((p) => ({ p, before: priceAt(p, weekAgo) ?? p.prices[0][1], now: p.prices.at(-1)[1] }))
         .filter((c) => c.before !== c.now)
         .sort((a, b) => Math.abs(b.now - b.before) / b.before - Math.abs(a.now - a.before) / a.before);
       const up = changed.filter((c) => c.now > c.before).length;
       const down = changed.length - up;
-      const basketBefore = list.reduce((sum, p) => sum + (priceAt(p, weekAgo) ?? p.prices[0][1]), 0);
+      const basketBefore = groups.reduce((sum, p) => sum + productPrice(p, weekAgo, today), 0);
 
       const status = changed.length && basket > basketBefore ? 'warn' : 'ok';
       $('headline').innerHTML = `<span class="dot ${status}"></span>${changed.length ? t('summary.changed', { n: changed.length }) : t('summary.noChanges')}`;
@@ -63,7 +65,7 @@
       list.forEach((p) => { perStore[p.store] = (perStore[p.store] || 0) + 1; });
       $('groceries-dot').className = `dot ${status}`;
       $('groceries-value').textContent = money.format(basket);
-      $('groceries-sub').textContent = t('summary.basket', { n: list.length });
+      $('groceries-sub').textContent = t('summary.basket', { n: groups.length });
       $('groceries-lines').innerHTML = [
         changed.length ? t('summary.in7', { change: change(basketBefore, basket) || t('summary.basketSame') }) : t('summary.basketUnchanged'),
         changed.length ? t('summary.upDown', { up, down }) : '',
