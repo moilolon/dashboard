@@ -138,7 +138,7 @@ moilolon-nav { --moilolon-nav-surface: var(--surface); --moilolon-nav-text: var(
 .button-group button.current { background: var(--active); color: var(--text); font-weight: 600; }
 
 .field { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 7px 10px; }
-input.field { min-width: 220px; }
+input.field { min-width: 250px; }
 
 /* Alerts on the summary */
 
