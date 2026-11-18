@@ -1,5 +1,5 @@
 {
-"updated": "2026-11-17",
+"updated": "2026-11-18",
 "products": {
 "alcampo:41079": {"name":"Abrillantador lavavajillas","store":"Alcampo","unit":"ud","category":"Limpieza y hogar","active":true,"prices":[["2026-11-16",4.8]]},
 "eroski:956300": {"name":"Abrillantador lavavajillas","store":"Eroski","unit":"ud","category":"Limpieza y hogar","active":true,"prices":[["2026-11-16",4.45]]},
@@ -78,6 +78,7 @@
 "mercadona:60294": {"name":"Film transparente","store":"Mercadona","unit":"ud","category":"Limpieza y hogar","active":true,"prices":[["2026-11-12",1.95]]},
 "eroski:26766832": {"name":"Friegasuelos","store":"Eroski","unit":"ud","category":"Limpieza y hogar","active":true,"prices":[["2026-11-16",0.95]]},
 "mercadona:43320": {"name":"Friegasuelos","store":"Mercadona","unit":"ud","category":"Limpieza y hogar","active":true,"prices":[["2026-11-12",0.95]]},
+"mercadona:14197": {"name":"Galletas","store":"Mercadona","unit":"ud","category":"Cereales y galletas","active":true,"prices":[["2026-11-18",1.35]]},
 "gadis:2935612": {"name":"Gasas","store":"Gadis","unit":"ud","category":"Bebé","active":true,"prices":[["2026-11-16",1.97]]},
 "mercadona:78132": {"name":"Gasas","store":"Mercadona","unit":"ud","category":"Bebé","active":true,"prices":[["2026-11-12",1.97]]},
 "mercadona:46578": {"name":"Gel de ducha","store":"Mercadona","unit":"ud","category":"Cuidado facial y corporal","active":true,"prices":[["2026-11-12",1.6]]},
