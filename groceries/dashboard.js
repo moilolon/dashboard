@@ -186,6 +186,15 @@ function render() {
   renderProducts(rows, from);
 }
 
+// Only the two charts depend on the width of the page. Drawing the cards again would
+// make new <img> for every photo, and they stay blank until each one loads again.
+function renderCharts() {
+  const from = periodStart();
+  const rows = visible().map((p) => summarise(p, from));
+  renderBasket(rows, from);
+  renderWeeks(rows, from);
+}
+
 function buttonGroup(id, key, attribute, convert = (v) => v) {
   $(id).addEventListener('click', (event) => {
     const button = event.target.closest('button');
@@ -238,8 +247,17 @@ async function start() {
     table.hidden = !table.hidden;
     link.textContent = t(table.hidden ? 'groceries.showTable' : 'groceries.hideTable');
   });
+  // A phone fires resize when its address bar hides or shows, with the same width:
+  // nothing to draw again then. The one common.js sends after a change of settings is
+  // not from the browser, and always draws.
   let wait;
-  window.addEventListener('resize', () => { clearTimeout(wait); wait = setTimeout(render, 150); });
+  let width = window.innerWidth;
+  window.addEventListener('resize', (event) => {
+    if (event.isTrusted && window.innerWidth === width) return;
+    width = window.innerWidth;
+    clearTimeout(wait);
+    wait = setTimeout(renderCharts, 150);
+  });
   render();
 
   // The summary links to an offer with ?p=<key>: it opens the product it belongs to.
