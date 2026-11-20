@@ -143,8 +143,10 @@ function renderProducts(rows, from) {
   const sorted = [...rows].sort((a, b) => SORTS[state.sort](a, b) || a.p.name.localeCompare(b.p.name, 'es'));
   $('products').innerHTML = sorted.map((r) => {
     const image = r.offers.map((o) => o.image).find((url) => /^https:\/\//.test(url || ''));
+    // The photos are small and load at once, not when they come into view: a browser that
+    // opens the page in a tab in the background can leave the deferred ones blank.
     const photo = image
-      ? `<img class="photo" src="${esc(image)}" alt="" loading="lazy" referrerpolicy="no-referrer">`
+      ? `<img class="photo" src="${esc(image)}" alt="" decoding="async" referrerpolicy="no-referrer">`
       : '<span class="photo none"></span>';
     return `<article class="card product" data-name="${esc(r.p.name)}" tabindex="0">
       <div class="top">
