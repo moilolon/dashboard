@@ -50,7 +50,7 @@ flowchart LR
     STORES["🏪 Mercadona · Alcampo<br/>Gadis · Eroski"]
 
     subgraph PRIV["🔒 asustor-flashstor-6 · private"]
-        CAT["branch datos/lista-compra<br/>catalogue.json"]
+        CAT["branch datos/lista-compra<br/>catalogue.json · ofertas.json"]
     end
 
     subgraph PUB["🌍 dashboard · public"]
