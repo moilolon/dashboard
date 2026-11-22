@@ -84,6 +84,7 @@ dashboard/
 │   ├── index.html
 │   ├── dashboard.js       Reads prices.json and draws
 │   └── prices.json        The data: n8n writes it
+├── 🖼️ favicon.svg         The icon of the tab, the same as moilolon.com
 └── 🤖 robots.txt          Asks search engines not to index the site
 ```
 
