@@ -11,7 +11,6 @@ const STRINGS = {
     'menu.shopping': 'Shopping',
     'menu.summary': 'Summary',
     'menu.groceries': 'Groceries',
-    'menu.code': 'Code',
     'menu.settings': 'Settings',
 
     'settings.lang': 'Language',
@@ -113,7 +112,6 @@ const STRINGS = {
     'menu.shopping': 'Compra',
     'menu.summary': 'Resumen',
     'menu.groceries': 'Supermercado',
-    'menu.code': 'Código',
     'menu.settings': 'Ajustes',
 
     'settings.lang': 'Idioma',

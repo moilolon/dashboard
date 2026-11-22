@@ -132,7 +132,6 @@ const ICONS = {
   basket: '<path d="M3 4h2l2.4 11h10.2L20 7H6.2"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/>',
   settings: '<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
   brand: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
-  code: '<path d="m8 8-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/>',
   back: '<path d="M15 5l-7 7 7 7"/>',
 };
 const icon = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]}</svg>`;
@@ -166,7 +165,6 @@ function renderMenu() {
   menu.innerHTML = `<div class="brand">${icon('brand')}<moilolon-nav current="dashboard"><a href="${root || './'}">Dashboards</a></moilolon-nav></div>`
     + MENU.map((g) => `<div class="group">${t(g.group)}</div>` + g.entries.map((e) => `<a class="item${e.id === page ? ' current' : ''}" href="${root}${e.path || './'}">${icon(e.icon)}${t(e.title)}</a>`).join('')).join('')
     + `<div class="bottom">
-        <a class="item" href="https://github.com/moilolon/dashboard">${icon('code')}${t('menu.code')}</a>
         <button class="item" id="settings-button" aria-expanded="false">${icon('settings')}${t('menu.settings')}</button>
         <div class="settings" id="settings" hidden></div>
       </div>`;
