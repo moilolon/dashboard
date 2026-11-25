@@ -10,6 +10,8 @@
 [![n8n](https://img.shields.io/badge/Data-n8n-EA4B71?style=for-the-badge&logo=n8n&logoColor=white)](https://n8n.io/)
 [![Home Assistant](https://img.shields.io/badge/Source-Home%20Assistant-41BDF5?style=for-the-badge&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/)
 
+<img src="assets/cover.png" alt="The name beside a dashboard with figure tiles, a price line per store and bars" width="820">
+
 </div>
 
 ---
