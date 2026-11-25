@@ -1,8 +1,6 @@
 <div align="center">
 
-<img src="assets/icon.png" alt="" width="72">
-
-# Dashboards
+# <img src="assets/icon.png" alt="" width="40" align="center"> Dashboards
 
 **Dashboards of home data, served with Vercel**
 
