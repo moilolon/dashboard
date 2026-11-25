@@ -15,8 +15,9 @@ The details below are for Claude.
   shared by every page.
 - Each dashboard is a folder with its `index.html`, its script and its JSON, loading
   `../styles.css`, `../i18n.js` and `../common.js`. Charts are hand-written SVG, no libraries.
-- `assets/cover.png` is the README cover, drawn from shapes by `assets/draw-cover.ps1`
-  (`powershell -NoProfile -File assets/draw-cover.ps1`); redraw it when what it shows changes.
+- `assets/draw-images.ps1` (`powershell -NoProfile -File assets/draw-images.ps1`) draws, from
+  shapes, the README cover (`cover.png`), the icon (`icon.png`, also the project's icon in
+  Orca) and the GitHub social preview (`social-preview.png`, uploaded by hand in Settings); redraw it when what it shows changes.
 - **Adding a dashboard:** its folder, its entry in `MENU` (`common.js`), its texts in both
   languages (`i18n.js`), its card in `index.html` and its row in the README table.
 - `?embed=1` hides the menu; `lang` (`en`, `es`), `theme` (`cool`, `warm`), `mode` (`auto`,
