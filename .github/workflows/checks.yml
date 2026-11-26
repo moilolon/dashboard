@@ -1,4 +1,4 @@
-name: checks
+name: Run the checks
 
 # n8n writes groceries/prices.json straight to main, and Vercel serves main with no build: this
 # is the only look the data gets before it reaches the site. On a pull request a failure shows
