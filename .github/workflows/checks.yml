@@ -1,0 +1,52 @@
+name: checks
+
+# n8n writes groceries/prices.json straight to main, and Vercel serves main with no build: this
+# is the only look the data gets before it reaches the site. On a pull request a failure shows
+# in the PR; on main (n8n's commits) it also comes as a Telegram message, with the bot token and
+# the chat in the repo's TELEGRAM_BOT_TOKEN secret and TELEGRAM_CHAT_MOISES variable. Nothing is
+# undone.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: The scripts parse
+        run: for f in *.js */*.js; do node --check "$f"; done
+
+      - name: groceries/prices.json has the shape the dashboard reads
+        run: node .github/scripts/validate-prices.mjs --out "$RUNNER_TEMP/errors.txt"
+
+      - name: Tell Moisés on Telegram
+        if: failure() && github.event_name != 'pull_request'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT: ${{ vars.TELEGRAM_CHAT_MOISES }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          COMMIT: ${{ github.event.head_commit.message || github.sha }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT" ]; then
+            echo "No TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT: no message sent."
+            exit 0
+          fi
+          errors=$(head -c 3500 "$RUNNER_TEMP/errors.txt" 2>/dev/null || true)
+          text=$(printf '⚠️ dashboard: checks failed on main\n%s\n\n%s\n\n%s' "${COMMIT%%$'\n'*}" "${errors:-(see the run)}" "$RUN_URL")
+          curl --fail --silent --show-error --output /dev/null \
+            --data-urlencode "chat_id=$TELEGRAM_CHAT" \
+            --data-urlencode "text=$text" \
+            --data-urlencode "disable_web_page_preview=true" \
+            "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage"

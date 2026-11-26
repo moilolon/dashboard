@@ -42,6 +42,15 @@ holds until the next point.
 - **Public repo:** only what the stores already show (name, code, photo, prices) plus the
   catalogue name, unit and category. Anything else stays in the private repo.
 
+## Checks
+
+`.github/workflows/checks.yml` (job `checks`) runs on every pull request and every push to
+`main`: the scripts parse (`node --check`) and `groceries/prices.json` has the shape above
+(`.github/scripts/validate-prices.mjs`: the key, a store in `STORES`, the unit, `ref`, and dated
+prices in order and not after `updated`). n8n's commits skip review, so on `main` a failure also
+comes to Moisés on Telegram (secret `TELEGRAM_BOT_TOKEN`, variable `TELEGRAM_CHAT_MOISES`). A
+change to the data's shape changes the validator in the same PR.
+
 ## Git
 
 - **Commits:** English, imperative, sentence case, one line of at most 72 characters with no
